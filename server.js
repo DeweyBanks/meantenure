@@ -25,7 +25,14 @@ app.use(stylus.middleware(
 ));
 app.use(express.static(__dirname + '/public'));
 
-mongoose.connect('mongodb://localhost:27017/tenureed');
+
+
+if(env === 'development') {
+  mongoose.connect('mongodb://localhost:27017/tenureed');
+} else {
+  mongoose.connect('mongodb://deweyb:tenureed@ds135532.mlab.com:35532/heroku_jzshb376');
+}
+
 
 var db = mongoose.connection;
 db.on('error', console.error.bind(console, 'connection error...'));
