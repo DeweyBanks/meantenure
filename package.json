@@ -1,6 +1,7 @@
 {
   "name": "tenureed",
   "version": "1.0.0",
+  "private": true,
   "description": "Tenure Ed Now",
   "main": "server.js",
   "scripts": {
@@ -12,6 +13,7 @@
     "body-parser": "^1.17.2",
     "express": "^4.15.3",
     "jade": "^1.11.0",
+    "mongoose": "^4.10.8",
     "morgan": "^1.8.2",
     "stylus": "^0.54.5"
   }

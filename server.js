@@ -2,6 +2,8 @@ var express = require('express');
 var stylus = require('stylus');
 var logger = require('morgan');
 var bodyParser = require('body-parser');
+var mongoose = require('mongoose');
+
 var env = process.env.NODE_ENV = process.env.NODE_ENV || 'development';
 
 var app = express();
@@ -23,14 +25,36 @@ app.use(stylus.middleware(
 ));
 app.use(express.static(__dirname + '/public'));
 
+mongoose.connect('mongodb://localhost:27017/tenureed');
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error...'));
+db.once('open', function callback() {
+  console.log('tenureed db opened:: ');
+});
+
+
+
+var messageSchema = mongoose.Schema({message: String});
+var Message = mongoose.model('Message', messageSchema);
+var mongoMessage = new Message({message: 'Hello mongoDB here'});
+mongoMessage.save(function(err, doc) {
+    Message.findOne().exec(function(err, messageDoc) {
+        mongoMessage = messageDoc.message;
+    });
+});
+
+
 app.get('/partials/:partialPath', function(req, res) {
   res.render('partials/' + req.params.partialPath);
 });
 
 
 // the * says to serve index file no matter what the request. this will allow the client side routes to take over
-app.get('*', function(req, res){
-  res.render('index');
+app.get('*', function(req, res) {
+  res.render('index', {
+    mongoMessage: mongoMessage
+  });
 });
 
 
