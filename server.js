@@ -58,6 +58,6 @@ app.get('*', function(req, res) {
 });
 
 
-var port = 3000;
+var port = process.env.PORT || 3030;
 app.listen(port);
 console.log('Listening on port ' + port + '...');
