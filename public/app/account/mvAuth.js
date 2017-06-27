@@ -17,7 +17,6 @@ angular.module('app').factory('mvAuth', function($http, mvIdentity, $q, mvUser) 
 
     createUser: function(newUserData) {
       var newUser = new mvUser(newUserData);
-      // create defered so it can implement a promise
       var dfd = $q.defer();
 
       newUser.$save().then(function() {
@@ -30,6 +29,19 @@ angular.module('app').factory('mvAuth', function($http, mvIdentity, $q, mvUser) 
       return dfd.promise;
     },
 
+    updateCurrentUser: function(newUserData) {
+      var dfd = $q.defer();
+
+      var clone = angular.copy(mvIdentity.currentUser);
+      angular.extend(clone, newUserData);
+      clone.$update().then(function() {
+        mvIdentity.currentUser = clone;
+        dfd.resolve();
+      }, function(response) {
+        dfd.reject(response.data.reason);
+      });
+      return dfd.promise;
+    },
 
     logoutUser: function() {
       var dfd = $q.defer();
@@ -46,6 +58,13 @@ angular.module('app').factory('mvAuth', function($http, mvIdentity, $q, mvUser) 
         return $q.reject('not authorized');
       }
 
+    },
+    authorizeAuthenticatedUserForRoute: function() {
+      if(mvIdentity.isAuthenticated()) {
+        return true;
+      } else {
+        return $q.reject('not authorized');
+      }
     }
   }
 });
